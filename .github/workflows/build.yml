@@ -1,0 +1,22 @@
+name: Build Windows EXE
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - name: Restore
+        run: dotnet restore UCTurboPC.csproj -r win-x64
+      - name: Publish
+        run: dotnet publish UCTurboPC.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -o publish
+      - name: Upload EXE
+        uses: actions/upload-artifact@v4
+        with:
+          name: UCTurboPC-win-x64
+          path: publish/
